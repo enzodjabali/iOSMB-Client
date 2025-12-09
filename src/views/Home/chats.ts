@@ -177,7 +177,7 @@ const newMessageHandler = (response: any) => {
       // this.lastNotificationGUID = messageData.guid
 
       const notificationOptions = {
-        appID: 'com.sgtaziz.WebMessage',
+        appID: 'com.enzodjabali.iOSMB',
         title: messageData.name as string,
         message: (body == '' ? 'Attachment' : body) as string,
         sound: store?.state.systemSound as boolean,
@@ -222,7 +222,7 @@ const newReactionHandler = (response: any) => {
     // this.lastNotificationGUID = reaction.guid
 
     const notificationOptions = {
-      appID: 'com.sgtaziz.WebMessage',
+      appID: 'com.enzodjabali.iOSMB',
       title: chatData.author as string,
       message: reaction.text.replace(/\u{fffc}/gu, '') as string,
       sound: store?.state.systemSound as boolean,

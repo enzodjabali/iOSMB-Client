@@ -4,7 +4,7 @@
       Unsupported Type
     </div>
     <div style="font-size:11px;margin-top:4px;">
-      This message cannot be viewed by WebMessage.
+      This message cannot be viewed by iOSMB Client.
     </div>
     <feather type="frown" style="height:24px;margin-top: 5px;" stroke="rgb(255,255,255)" size="16"></feather>
   </div>

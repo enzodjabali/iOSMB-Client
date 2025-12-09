@@ -1,5 +1,5 @@
 services:
-  webmessage:
+  iosmb-client:
     build:
       context: .
     ports:
@@ -7,4 +7,4 @@ services:
     environment:
       - NODE_ENV=production
     labels:
-      - "com.webmessage.description=WebMessage Web Client"
+      - "com.iosmb.description=iOSMB Client - iOS Message Bridge"

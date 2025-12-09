@@ -1,8 +1,8 @@
-# WebMessage - Web Client
+# iOSMB Client - iOS Message Bridge
 
-A web-based client for communicating with the WebMessage tweak on iOS. Send and receive messages from the comfort of your web browser.
+A web-based client for iOS Message Bridge. Send and receive iOS messages from the comfort of your web browser.
 
-This is a web-only version of the WebMessage client, removing all Electron dependencies and running entirely in the browser.
+This is a web-only client, removing all Electron dependencies and running entirely in the browser.
 
 ## Features
 
@@ -18,7 +18,7 @@ This is a web-only version of the WebMessage client, removing all Electron depen
 
 ## Requirements
 
-- A device with the [WebMessage tweak](https://github.com/sgtaziz/WebMessage-Tweak) installed
+- An iOS device with iOSMB Server installed
 - Node.js and npm/yarn installed for development
 - Your device and computer must be on the same network (or use port forwarding/VPN)
 
@@ -91,10 +91,10 @@ docker rm webmessage
 
 On first launch, go to Settings and configure:
 
-1. **Password**: The password set in the WebMessage tweak
-2. **IP Address**: Your device's IP address on the local network
-3. **Port**: The port configured in the WebMessage tweak (default: 8180)
-4. **SSL**: Enable if you've configured SSL in the tweak
+1. **Password**: The password set in the iOSMB Server
+2. **IP Address**: Your iOS device's IP address on the local network
+3. **Port**: The port configured in the iOSMB Server (default: 8180)
+4. **SSL**: Enable if you've configured SSL in the server
 
 ## Differences from Electron Version
 
@@ -124,7 +124,7 @@ You can deploy this web app to:
 - Any static hosting service
 - Your own web server (Apache, Nginx, etc.)
 
-For HTTPS deployment, you'll need to ensure your WebMessage server also uses SSL, or configure CORS appropriately.
+For HTTPS deployment, you'll need to ensure your iOSMB Server also uses SSL, or configure CORS appropriately.
 
 ## Security Note
 
@@ -132,10 +132,10 @@ When accessing over the internet, always use SSL/HTTPS to protect your messages 
 
 ## License
 
-Same as the original WebMessage project.
+MIT License
 
 ## Credits
 
-Original WebMessage client by [sgtaziz](https://github.com/sgtaziz)
+Based on the original WebMessage project by [sgtaziz](https://github.com/sgtaziz)
 
-Web adaptation removes Electron layer for browser-based usage.
+Developed by [enzodjabali](https://github.com/enzodjabali)
