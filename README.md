@@ -33,6 +33,44 @@ yarn install
 
 ## Configuration
 
+Before running the application, you need to configure the server settings and authentication:
+
+1. Copy `src/config.example.ts` to `src/config.ts`
+2. Update the configuration file with your settings
+
+### Default Settings
+
+The default configuration in `src/config.ts` includes:
+
+#### Web App Login (for accessing the web interface)
+- **Username**: `admin`
+- **Password**: `admin123`
+- **Password Hash**: `240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9`
+
+#### Server Connection (your iOS device)
+- **IP Address**: `79.137.79.153` (example - change to your device IP)
+- **Port**: `8180`
+- **Server Password**: `W3bM4sSaGs188SecUr1z0` (example - change to your server password)
+- **SSL**: `false`
+
+### Changing the Web App Password
+
+To set a new password for the web app login:
+
+**Option 1 - Browser Console:**
+```javascript
+crypto.subtle.digest('SHA-256', new TextEncoder().encode('your-new-password'))
+  .then(h => console.log(Array.from(new Uint8Array(h))
+  .map(b => b.toString(16).padStart(2, '0')).join('')))
+```
+
+**Option 2 - Linux/Mac Terminal:**
+```bash
+echo -n "your-new-password" | sha256sum
+```
+
+Copy the generated hash and update `webAppPasswordHash` in `src/config.ts`.
+
 **Important:** Server settings are now configured in code, not in the browser UI.
 
 1. Copy the example configuration file:

@@ -33,6 +33,9 @@
         <div class="menuBtn">
           <feather type="edit" stroke="rgba(36,132,255,0.65)" size="20" @click="chats.composeMessage"></feather>
         </div>
+        <div class="menuBtn" v-tooltip:bottom.tooltip="'Logout'">
+          <feather type="log-out" stroke="rgba(255,89,88,0.65)" size="20" @click="handleLogout"></feather>
+        </div>
         <div class="menuBtn" v-if="window.updateAvailable">
           <feather type="download" stroke="rgba(152,255,152,0.65)" size="20" @click="window.restart"></feather>
         </div>
@@ -88,6 +91,11 @@ export default {
 
     return { chats, window, notifications }
   },
+  methods: {
+    handleLogout() {
+      this.$emit('logout')
+    }
+  }
 }
 </script>
 
