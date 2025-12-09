@@ -15,6 +15,9 @@ RUN yarn install --frozen-lockfile
 # Copy source files
 COPY . .
 
+# Create config.ts from example if it doesn't exist
+RUN if [ ! -f src/config.ts ]; then cp src/config.example.ts src/config.ts; fi
+
 # Build the application
 RUN yarn build
 
