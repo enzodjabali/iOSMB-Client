@@ -215,7 +215,11 @@ html {
   width: 100%;
   background-color: rgba(29, 29, 29, 0);
   font-family: 'Roboto', -apple-system, BlinkMacSystemFont, Avenir, Helvetica, Arial, sans-serif;
-  font-weight: 300;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-smooth: always;
 }
 
 body {
@@ -227,17 +231,22 @@ body {
   overflow: hidden;
   border: 1px solid rgb(0, 0, 0);
   border-radius: 10px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #vueApp {
   font-family: 'Roboto', -apple-system, BlinkMacSystemFont, Avenir, Helvetica, Arial, sans-serif;
-  font-weight: 300;
+  font-weight: 400;
   text-align: center;
   color: #ebecec;
   position: absolute;
   top: 0px;
   left: 0px;
   right: 0px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-smooth: always;
   bottom: 0px;
   background-color: rgba(29, 29, 29, 0);
   border: 1px solid #4a4a4a;
