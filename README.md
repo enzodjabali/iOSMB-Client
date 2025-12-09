@@ -31,6 +31,27 @@ npm install
 yarn install
 ```
 
+## Configuration
+
+**Important:** Server settings are now configured in code, not in the browser UI.
+
+1. Copy the example configuration file:
+   ```bash
+   cp src/config.example.ts src/config.ts
+   ```
+
+2. Edit `src/config.ts` with your iOSMB server details:
+   ```typescript
+   export const config = {
+     ipAddress: '192.168.1.100',  // Your iOS device IP
+     port: 8180,                   // Server port
+     password: 'your-password',    // Server password
+     ssl: false,                   // Enable if using HTTPS
+   }
+   ```
+
+3. The `config.ts` file is ignored by git to protect your credentials.
+
 ## Development
 
 ```bash
@@ -86,15 +107,6 @@ docker logs -f webmessage
 docker stop webmessage
 docker rm webmessage
 ```
-
-## Configuration
-
-On first launch, go to Settings and configure:
-
-1. **Password**: The password set in the iOSMB Server
-2. **IP Address**: Your iOS device's IP address on the local network
-3. **Port**: The port configured in the iOSMB Server (default: 8180)
-4. **SSL**: Enable if you've configured SSL in the server
 
 ## Browser Compatibility
 

@@ -1,5 +1,5 @@
 import { createStore } from 'vuex'
-import axios from 'axios'
+import { config as serverConfig } from '@/config'
 
 // Helper functions for localStorage persistence
 const getLocalStorage = (key: string, defaultValue: unknown) => {
@@ -18,11 +18,13 @@ const setLocalStorage = (key: string, value: unknown) => {
 
 export default createStore({
   state: {
-    password: getLocalStorage('password', '') as string,
-    ipAddress: getLocalStorage('ipAddress', '') as string,
-    fallbackIpAddress: getLocalStorage('fallbackIpAddress', '') as string,
-    port: getLocalStorage('port', 8180) as number,
-    ssl: getLocalStorage('ssl', true) as boolean,
+    // Server settings from config file (not modifiable in UI)
+    password: serverConfig.password,
+    ipAddress: serverConfig.ipAddress,
+    fallbackIpAddress: '',
+    port: serverConfig.port,
+    ssl: serverConfig.ssl,
+    // User preferences (still stored in localStorage)
     subjectLine: getLocalStorage('subjectLine', false) as boolean,
     transcode: getLocalStorage('transcode', true) as boolean,
     systemSound: getLocalStorage('systemSound', false) as boolean,
@@ -41,27 +43,7 @@ export default createStore({
     isTypingTimer: [] as NodeJS.Timeout[],
   },
   mutations: {
-    setPassword(state, password) {
-      state['password'] = password
-      setLocalStorage('password', password)
-      axios.defaults.headers.common['Authorization'] = password
-    },
-    setIPAddress(state, ip) {
-      state['ipAddress'] = ip
-      setLocalStorage('ipAddress', ip)
-    },
-    setFallbackIPAddress(state, ip) {
-      state['fallbackIpAddress'] = ip
-      setLocalStorage('fallbackIpAddress', ip)
-    },
-    setPort(state, port) {
-      state['port'] = port
-      setLocalStorage('port', port)
-    },
-    setSSL(state, ssl) {
-      state['ssl'] = ssl
-      setLocalStorage('ssl', ssl)
-    },
+    // Server settings mutations removed - now configured in src/config.ts
     setSubjectLine(state, subjectLine) {
       state['subjectLine'] = subjectLine
       setLocalStorage('subjectLine', subjectLine)
