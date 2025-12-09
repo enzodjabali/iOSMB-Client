@@ -44,7 +44,8 @@
 </template>
 
 <script>
-import { config, hashPassword } from '@/config'
+import { config } from '@/config'
+import { hashPassword } from '@/utils/auth'
 
 export default {
   name: 'Login',
