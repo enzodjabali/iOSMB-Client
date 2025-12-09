@@ -53,6 +53,40 @@ yarn build
 
 The built files will be in the `dist/` directory and can be deployed to any static web hosting service.
 
+## Docker Deployment
+
+### Using Docker Compose (Recommended)
+
+```bash
+# Build and run the container
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop the container
+docker-compose down
+```
+
+The application will be available at `http://localhost:8080`
+
+### Using Docker directly
+
+```bash
+# Build the image
+docker build -t webmessage-web .
+
+# Run the container
+docker run -d -p 8080:80 --name webmessage webmessage-web
+
+# View logs
+docker logs -f webmessage
+
+# Stop and remove the container
+docker stop webmessage
+docker rm webmessage
+```
+
 ## Configuration
 
 On first launch, go to Settings and configure:
