@@ -10,7 +10,8 @@ export const state = reactive({
   win: null as any,
   maximized: false,
   updateReady: false,
-  newUpdate: false
+  newUpdate: false,
+  connected: false
 })
 
 export function closeWindow(): void {
@@ -33,22 +34,22 @@ export function restart(): void {
   window.location.reload()
 }
 
+export function setConnected(isConnected: boolean): void {
+  state.connected = isConnected
+}
+
 export const statusColor = computed(() => {
-  if (state.updateReady) {
-    return 'green'
-  } else if (state.newUpdate) {
-    return 'orange'
+  if (state.connected) {
+    return 'rgb(50, 215, 75)'
   }
-  return ''
+  return 'rgb(255, 69, 58)'
 })
 
 export const statusText = computed(() => {
-  if (state.updateReady) {
-    return 'Update ready!'
-  } else if (state.newUpdate) {
-    return 'Update downloading...'
+  if (state.connected) {
+    return 'Connected'
   }
-  return ''
+  return 'Disconnected'
 })
 
 export function initWindow(r: Router): void {
@@ -68,6 +69,7 @@ export default function () {
     minimizeWindow,
     maximizeWindow,
     restart,
+    setConnected,
     statusColor,
     statusText,
     win,

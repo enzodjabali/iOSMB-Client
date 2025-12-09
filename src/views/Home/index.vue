@@ -22,7 +22,7 @@
           </div>
         </div>
         <div class="statusIndicator" style="margin-top: 1px;" v-tooltip:bottom.tooltip="window.statusText.value">
-          <feather type="circle" stroke="rgba(25,25,25,0.5)" :fill="window.statusColor.value" size="10"></feather>
+          <feather type="circle" stroke="rgba(100,100,100,0.8)" :fill="window.statusColor.value" size="10"></feather>
         </div>
         <div class="menuBtn">
           <feather type="settings" stroke="rgba(152,152,152,0.5)" size="20" @click="$refs.settingsModal.openModal()"></feather>

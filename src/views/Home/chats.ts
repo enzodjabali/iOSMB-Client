@@ -3,7 +3,7 @@ import main from '@/main'
 
 import { RouteLocationNormalizedLoaded, Router, useRoute, useRouter } from 'vue-router'
 import { Store, useStore } from 'vuex'
-import { state as windowState } from './window'
+import { state as windowState, setConnected } from './window'
 import { state as notificationsState, sendNotifierNotification } from './notifications'
 
 interface ChatObject {
@@ -320,6 +320,9 @@ const onSocketDisconnect = (e: Event | CloseEvent) => {
   store?.commit('resetMessages')
   router?.push('/').catch(() => {})
   state.chats = []
+  
+  // Update connection status indicator
+  setConnected(false)
 
   // eslint-disable-next-line @typescript-eslint/no-use-before-define
   if (windowState.status == 0) setTimeout(connectWS, 1000)
@@ -330,6 +333,10 @@ const onSocketConnected = () => {
   state.offset = 0
   windowState.status = 1
   state.loading = false
+  
+  // Update connection status indicator
+  setConnected(true)
+  
   // eslint-disable-next-line @typescript-eslint/no-use-before-define
   fetchChats()
 }
