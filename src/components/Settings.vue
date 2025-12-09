@@ -5,7 +5,7 @@
         class="modal__backdrop"
         @click="closeModal()"
         :class="{
-          nostyle: !($store.state.macstyle || process.platform === 'darwin'),
+          nostyle: true,
         }"
       />
 
@@ -114,34 +114,8 @@
                 <span style="color: rgba(255,0,0,0.8);font-size: 12px;">More battery drain</span>
               </div>
             </label>
-            <label class="switch">
-              <input type="checkbox" v-model="launchOnStartup" />
-              <i></i>
-              <div>
-                Launch on startup
-              </div>
-            </label>
-            <label class="switch">
-              <input type="checkbox" v-model="minimize" />
-              <i></i>
-              <div>
-                Close to tray
-              </div>
-            </label>
-            <label class="switch" v-if="process.platform !== 'darwin'">
-              <input type="checkbox" v-model="macstyle" />
-              <i></i>
-              <div>
-                Use macOS style
-              </div>
-            </label>
-            <label class="switch">
-              <input type="checkbox" v-model="acceleration" />
-              <i></i>
-              <div>
-                Enable hardware acceleration
-              </div>
-            </label>
+            <!-- Launch on startup and window controls not available in web version -->
+            
             <label class="switch">
               <input type="checkbox" v-model="privacyMode" />
               <i></i>
@@ -182,8 +156,6 @@
 </template>
 
 <script>
-import usbmux from 'usbmux'
-import { ipcRenderer } from 'electron'
 import Tooltip from '@/components/Tooltip.vue'
 
 export default {
@@ -205,102 +177,38 @@ export default {
       systemSound: false,
       launchOnStartup: false,
       minimize: true,
-      macstyle: true,
+      macstyle: false,
       acceleration: true,
-      version: '',
-      process: window.process,
-      relay: null,
-      relayStatus: -1,
-      relayMessage: 'Tunneling is currently disabled. Click the circle and ensure your device is attached to enable it.',
+      version: '0.7.2-web',
+      process: { platform: 'web' },
+      relayMessage: 'Tunneling is not available in web version',
       relayColor: 'rgba(152,152,152,0.5)',
       enableTunnel: false,
       cacheMessages: false,
-      notifSound: 'wm-audio://receivedText.mp3',
+      notifSound: '/sounds/receivedText.mp3',
       emojiSet: 'Twitter',
       privacyMode: false,
       activeView: 'tweak',
-    }
-  },
-  beforeUnmount() {
-    if (this.relay) {
-      try {
-        this.relay.stop()
-      } catch (err) {
-        // This happens sometimes for some reason. Seems like a race condition
-      }
     }
   },
   methods: {
     notifSoundChanged(e) {
       if (e.target.files && e.target.files[0]) {
         const file = e.target.files[0]
-        const path = 'local-file://' + file.path
-
-        this.notifSound = path
+        const reader = new FileReader()
+        
+        reader.onload = (event) => {
+          this.notifSound = event.target.result
+        }
+        
+        reader.readAsDataURL(file)
       }
     },
     toggleTunnel() {
-      this.enableTunnel = !this.enableTunnel
-      this.$store.commit('setTunnel', this.enableTunnel)
-      if (this.enableTunnel) {
-        this.initTunnel()
-      } else {
-        if (this.relay) {
-          try {
-            this.relay.stop()
-          } catch (err) {
-            // This happens sometimes for some reason. Seems like a race condition
-          }
-          this.$store.commit('setIPAddress', this.ipAddress)
-          this.$emit('saved')
-        }
-
-        this.relayMessage = 'Tunneling is currently disabled. Click the circle and ensure your device is attached to enable it.'
-        this.relayColor = 'rgba(152,152,152,0.5)'
-      }
-    },
-    initTunnel() {
-      if (this.relay) {
-        try {
-          this.relay.stop()
-        } catch (err) {
-          // This happens sometimes for some reason. Seems like a race condition
-        }
-      }
-
-      this.relay = new usbmux.Relay(this.port, this.port)
-        .on('error', err => {
-          if (err.message.includes('No devices connected')) {
-            this.relayMessage = 'Error: No device is attached. Ensure that your device is plugged in and that you have iTunes installed.'
-            this.relayStatus = 0
-            this.$store.commit('setIPAddress', this.ipAddress)
-            this.$emit('saved')
-            this.relayColor = 'rgba(255,0,0,0.5)'
-          }
-        })
-        .on('warning', err => {
-          if (err.message.includes('No devices connected')) {
-            this.relayMessage = 'Error: No device is attached. Ensure that your device is plugged in and that you have iTunes installed.'
-            this.relayStatus = 0
-            this.$store.commit('setIPAddress', this.ipAddress)
-            this.$emit('saved')
-            this.relayColor = 'rgba(255,0,0,0.5)'
-          }
-        })
-        .on('attached', () => {
-          this.relayMessage = 'Tunneling is active and your device is attached. We will automatically setup the settings for you.'
-          this.relayStatus = 1
-          this.$store.commit('setIPAddress', '127.0.0.1')
-          if (this.$socket && this.$socket.readyState == 1) window.location.reload()
-          setTimeout(() => {
-            this.$emit('saved')
-          }, 10)
-          this.relayColor = 'rgba(0,255,0,0.5)'
-        })
+      // Tunneling not available in web version
+      alert('USB tunneling is not available in the web version. Please use direct IP connection.')
     },
     saveModal() {
-      const reloadApp = this.$store.state.macstyle != this.macstyle || this.$store.state.acceleration != this.acceleration
-
       this.$store.commit('setPassword', this.password)
       this.$store.commit('setIPAddress', this.ipAddress)
       this.$store.commit('setFallbackIPAddress', this.ipAddress)
@@ -318,13 +226,7 @@ export default {
       this.$store.commit('setEmojiSet', this.emojiSet)
       this.$store.commit('setPrivacyMode', this.privacyMode)
       this.show = false
-      if (this.enableTunnel) {
-        this.initTunnel()
-      } else {
-        this.$emit('saved')
-      }
-
-      if (reloadApp) ipcRenderer.send('reload_app')
+      this.$emit('saved')
     },
     closeModal() {
       this.show = false
@@ -350,9 +252,6 @@ export default {
       this.notifSound = this.$store.state.notifSound
       this.emojiSet = this.$store.state.emojiSet
       this.privacyMode = this.$store.state.privacyMode
-      if (this.enableTunnel) {
-        this.initTunnel()
-      }
     },
     enforceConstraints() {
       const el = this.$refs.portField
@@ -368,13 +267,6 @@ export default {
   },
   mounted() {
     this.loadValues()
-
-    ipcRenderer.send('startup_check')
-    ipcRenderer.send('app_version')
-    ipcRenderer.on('app_version', (event, arg) => {
-      ipcRenderer.removeAllListeners('app_version')
-      this.version = arg.version
-    })
   },
 }
 </script>

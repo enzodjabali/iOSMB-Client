@@ -1,26 +1,141 @@
-# WebMessage [![Build Status](https://travis-ci.org/sgtaziz/WebMessage.svg?branch=main)](https://travis-ci.org/sgtaziz/WebMessage)
-A messaging client, meant to work with the [WebMessage tweak](https://github.com/sgtaziz/WebMessage-Tweak) for jailbroken iOS devices.
+# WebMessage - Web Client
 
-## Donating
-If you would like to support my work, you can donate using [this link](https://paypal.me/sgtaziztweaks).
+A web-based client for communicating with the WebMessage tweak on iOS. Send and receive messages from the comfort of your web browser.
 
-## Screenshots
-![Screenshot 1](https://i.imgur.com/AiZ1GbR.png)
+This is a web-only version of the WebMessage client, removing all Electron dependencies and running entirely in the browser.
 
-![Screenshot 2](https://i.imgur.com/ioMiXOn.png)
+## Features
 
-## Development
-### Installs required dependencies 
-```
+- Real-time sending and receiving of messages via WebSocket
+- Sending attachments from your computer
+- Browser notifications
+- SSL encryption support
+- Password-protected connection
+- Message reactions (tapbacks)
+- Emoji support with multiple emoji sets
+- Privacy mode
+- Message caching
+
+## Requirements
+
+- A device with the [WebMessage tweak](https://github.com/sgtaziz/WebMessage-Tweak) installed
+- Node.js and npm/yarn installed for development
+- Your device and computer must be on the same network (or use port forwarding/VPN)
+
+## Installation
+
+```bash
+# Install dependencies
+npm install
+# or
 yarn install
 ```
 
-### Compiles and hot-reloads for development
-```
+## Development
+
+```bash
+# Run development server
+npm run serve
+# or
 yarn serve
 ```
 
-### Compiles and bundles for production
-```
+The application will be available at `http://localhost:8080`
+
+## Building for Production
+
+```bash
+# Build for production
+npm run build
+# or
 yarn build
 ```
+
+The built files will be in the `dist/` directory and can be deployed to any static web hosting service.
+
+## Docker Deployment
+
+### Using Docker Compose (Recommended)
+
+```bash
+# Build and run the container
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop the container
+docker-compose down
+```
+
+The application will be available at `http://localhost:8080`
+
+### Using Docker directly
+
+```bash
+# Build the image
+docker build -t webmessage-web .
+
+# Run the container
+docker run -d -p 8080:80 --name webmessage webmessage-web
+
+# View logs
+docker logs -f webmessage
+
+# Stop and remove the container
+docker stop webmessage
+docker rm webmessage
+```
+
+## Configuration
+
+On first launch, go to Settings and configure:
+
+1. **Password**: The password set in the WebMessage tweak
+2. **IP Address**: Your device's IP address on the local network
+3. **Port**: The port configured in the WebMessage tweak (default: 8180)
+4. **SSL**: Enable if you've configured SSL in the tweak
+
+## Differences from Electron Version
+
+This web version has the following differences:
+
+- No USB tunneling support (direct IP connection only)
+- No desktop notifications (uses browser notifications instead)
+- No system tray integration
+- No auto-launch on startup
+- No window controls (uses browser window)
+- Settings are stored in browser localStorage instead of electron-store
+
+## Browser Compatibility
+
+- Chrome/Edge 90+
+- Firefox 88+
+- Safari 14+
+- Any modern browser with WebSocket and Notification API support
+
+## Deployment Options
+
+You can deploy this web app to:
+
+- GitHub Pages
+- Netlify
+- Vercel
+- Any static hosting service
+- Your own web server (Apache, Nginx, etc.)
+
+For HTTPS deployment, you'll need to ensure your WebMessage server also uses SSL, or configure CORS appropriately.
+
+## Security Note
+
+When accessing over the internet, always use SSL/HTTPS to protect your messages and credentials. Consider using a VPN for secure remote access.
+
+## License
+
+Same as the original WebMessage project.
+
+## Credits
+
+Original WebMessage client by [sgtaziz](https://github.com/sgtaziz)
+
+Web adaptation removes Electron layer for browser-based usage.

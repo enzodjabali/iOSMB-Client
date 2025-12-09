@@ -3,7 +3,6 @@ import main from '@/main'
 
 import { RouteLocationNormalizedLoaded, Router, useRoute, useRouter } from 'vue-router'
 import { Store, useStore } from 'vuex'
-import * as remote from '@electron/remote'
 import { state as windowState } from './window'
 import { state as notificationsState, sendNotifierNotification } from './notifications'
 
@@ -21,6 +20,7 @@ let route: Nullable<RouteLocationNormalizedLoaded> = null
 let router: Nullable<Router> = null
 let currentInstance: Nullable<ComponentInternalInstance> = null
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line prefer-const
 let store: Nullable<Store<any>> = null
 
 const state = reactive({
@@ -166,7 +166,7 @@ const newMessageHandler = (response: any) => {
       store?.state.messagesCache[messageData.personId].unshift(messageData)
     }
 
-    if (messageData.sender != 1 && remote.Notification.isSupported()) {
+    if (messageData.sender != 1 && ('Notification' in window)) {
       if (store?.state.mutedChats.includes(messageData.personId)) return
       // if (this.lastNotificationGUID == messageData.guid) return
 
@@ -184,7 +184,7 @@ const newMessageHandler = (response: any) => {
         icon: null as Nullable<string>,
       }
 
-      if (document.hasFocus() && remote.getCurrentWindow().isVisible() && route?.params.id == messageData.personId) return
+      if (document.hasFocus() && document.hasFocus() && route?.params.id == messageData.personId) return
       sendNotifierNotification(notificationOptions, messageData)
     } else if (messageData.sender != 1) {
       // console.log('Notifications are not supported on this system.')
@@ -214,7 +214,7 @@ const newReactionHandler = (response: any) => {
     state.chats.unshift(chatData)
   }
 
-  if (reactions && reactions.length > 0 && reactions[0].sender != 1 && remote.Notification.isSupported()) {
+  if (reactions && reactions.length > 0 && reactions[0].sender != 1 && ('Notification' in window)) {
     const reaction = reactions[0]
     if (store?.state.mutedChats.includes(reaction.personId)) return
     // if (this.lastNotificationGUID == reaction.guid) return
@@ -385,6 +385,14 @@ const connectWS = () => {
   notificationsState.notifSound = new Audio(store?.state.notifSound)
 
   const baseURI = store?.getters.baseURI
+  
+  // Validate that connection settings are configured
+  if (!store?.state.ipAddress || !store?.state.password) {
+    console.warn('WebSocket connection settings not configured. Please configure in Settings.')
+    windowState.status = 0
+    return
+  }
+  
   if (connect) {
     connect(baseURI, {
       format: 'json',
@@ -404,9 +412,6 @@ const connectWS = () => {
     setTimeout(connectWS, 1)
   }
 }
-
-export { state }
-
 export default () => {
   store = useStore()
   route = useRoute()

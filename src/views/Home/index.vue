@@ -2,15 +2,15 @@
   <div
     id="vueApp"
     :class="{
-      nostyle: !($store.state.macstyle || window.process.platform === 'darwin'),
-      maximized: (window.state.maximized || !$store.state.acceleration) && window.process.platform !== 'darwin',
+      nostyle: !($store.state.macstyle || false),
+      maximized: (false || !$store.state.acceleration) && window.process.platform !== 'darwin',
       privacy: $store.state.privacyMode,
     }"
   >
     <settings ref="settingsModal" @saved="chats.connectWS"></settings>
     <div id="nav" :class="{ notrans: !$store.state.acceleration }">
       <div class="titlebar">
-        <div class="buttons" v-if="$store.state.macstyle || window.process.platform === 'darwin'">
+        <div class="buttons" v-if="$store.state.macstyle || false">
           <div class="close" @click="window.closeWindow">
             <span class="closebutton"><span>x</span></span>
           </div>

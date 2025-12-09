@@ -1,0 +1,10 @@
+services:
+  webmessage:
+    build:
+      context: .
+    ports:
+      - "8080:80"
+    environment:
+      - NODE_ENV=production
+    labels:
+      - "com.webmessage.description=WebMessage Web Client"

@@ -3,20 +3,19 @@
     "target": "esnext",
     "module": "esnext",
     "strict": false,
-    "noImplicitThis": true,
     "jsx": "preserve",
-    "importHelpers": true,
     "moduleResolution": "node",
-    "experimentalDecorators": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "useDefineForClassFields": true,
     "sourceMap": true,
-    "resolveJsonModule": true,
     "baseUrl": ".",
+    "resolveJsonModule": true,
     "types": [
       "webpack-env",
-      "jquery"
+      "node"
     ],
     "paths": {
       "@/*": [
@@ -35,8 +34,7 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
-    "tests/**/*.tsx",
-    "src/mixin/index.js"
+    "tests/**/*.tsx"
   ],
   "exclude": [
     "node_modules"
