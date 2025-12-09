@@ -16,7 +16,7 @@
       </i>
     </template>
     <img v-if="convertedImageUrl" crossorigin="anonymous" :id="guid" :src="convertedImageUrl" @load="handleLoad" />
-    <lazy-image v-else crossorigin="anonymous" :id="guid" :src="url" @load="handleLoad" @error="handleError" :download="path.split('/').pop()" />
+    <lazy-image v-else-if="!isConverting" crossorigin="anonymous" :id="guid" :src="url" @load="handleLoad" @error="handleError" :download="path.split('/').pop()" />
     <div v-if="isConverting" class="image-converting">
       <feather type="loader" stroke="rgb(150,150,150)" size="48" class="spin"></feather>
       <div style="margin-top: 12px; font-size: 12px; color: rgb(150,150,150);">
@@ -123,7 +123,12 @@ export default {
     },
     async handleError() {
       // Check if it might be a HEIC image
-      if (this.path.toLowerCase().endsWith('.heic') || this.path.toLowerCase().endsWith('.heif') || this.type.toLowerCase().includes('heic') || this.type.toLowerCase().includes('heif')) {
+      const isHeic = this.path.toLowerCase().endsWith('.heic') || 
+                     this.path.toLowerCase().endsWith('.heif') || 
+                     this.type.toLowerCase().includes('heic') || 
+                     this.type.toLowerCase().includes('heif')
+      
+      if (isHeic) {
         await this.convertHeicImage()
       } else {
         this.imageError = true
@@ -135,9 +140,23 @@ export default {
       try {
         this.isConverting = true
         
-        // Fetch the HEIC image as a blob
-        const response = await fetch(this.url)
+        // Fetch the HEIC image as a blob (without transcode param for client-side conversion)
+        const urlWithoutTranscode = this.url.replace(/&transcode=1/, '')
+        const response = await fetch(urlWithoutTranscode)
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch image: ${response.status}`)
+        }
+        
         const blob = await response.blob()
+        
+        // Check if it's actually a HEIC file
+        if (!blob.type.includes('heic') && !blob.type.includes('heif') && blob.type !== 'application/octet-stream') {
+          // If server already converted it, just use it
+          this.convertedImageUrl = URL.createObjectURL(blob)
+          this.isConverting = false
+          return
+        }
         
         // Convert HEIC to JPEG
         const convertedBlob = await heic2any({
@@ -150,7 +169,7 @@ export default {
         this.convertedImageUrl = URL.createObjectURL(Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob)
         this.isConverting = false
       } catch (error) {
-        console.error('Failed to convert HEIC image:', error)
+        console.warn('HEIC conversion failed, image may not be displayable:', error.message)
         this.isConverting = false
         this.imageError = true
         this.$nextTick(this.loadedData)
