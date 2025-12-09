@@ -33,62 +33,49 @@ yarn install
 
 ## Configuration
 
-Before running the application, you need to configure the server settings and authentication:
+### Local Development
 
-1. Copy `src/config.example.ts` to `src/config.ts`
-2. Update the configuration file with your settings
+1. **Copy the example config:**
+   ```bash
+   cp public/config.example.js public/config.js
+   ```
 
-### Default Settings
+2. **Edit `public/config.js` with your settings:**
+   ```javascript
+   window.APP_CONFIG = {
+     ipAddress: '192.168.1.100',    // Your iOS device IP
+     port: 8180,                     // Server port
+     password: 'your-password',      // Server password
+     ssl: false,                     // Use wss:// instead of ws://
+     webAppUsername: 'admin',        // Web login username
+     webAppPasswordHash: '240be...'  // SHA-256 hash (see below)
+   }
+   ```
 
-The default configuration in `src/config.ts` includes:
-
-#### Web App Login (for accessing the web interface)
-- **Username**: `admin`
-- **Password**: `admin123`
-- **Password Hash**: `240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9`
-
-#### Server Connection (your iOS device)
-- **IP Address**: `79.137.79.153` (example - change to your device IP)
-- **Port**: `8180`
-- **Server Password**: `W3bM4sSaGs188SecUr1z0` (example - change to your server password)
-- **SSL**: `false`
+3. The `public/config.js` file is gitignored to protect your credentials.
 
 ### Changing the Web App Password
 
-To set a new password for the web app login:
+To generate a password hash for web app login:
 
-**Option 1 - Browser Console:**
+**Browser Console:**
 ```javascript
 crypto.subtle.digest('SHA-256', new TextEncoder().encode('your-new-password'))
   .then(h => console.log(Array.from(new Uint8Array(h))
   .map(b => b.toString(16).padStart(2, '0')).join('')))
 ```
 
-**Option 2 - Linux/Mac Terminal:**
+**Linux/Mac Terminal:**
 ```bash
 echo -n "your-new-password" | sha256sum
 ```
 
-Copy the generated hash and update `webAppPasswordHash` in `src/config.ts`.
+Copy the hash and update `webAppPasswordHash` in your config.
 
-**Important:** Server settings are now configured in code, not in the browser UI.
-
-1. Copy the example configuration file:
-   ```bash
-   cp src/config.example.ts src/config.ts
-   ```
-
-2. Edit `src/config.ts` with your iOSMB server details:
-   ```typescript
-   export const config = {
-     ipAddress: '192.168.1.100',  // Your iOS device IP
-     port: 8180,                   // Server port
-     password: 'your-password',    // Server password
-     ssl: false,                   // Enable if using HTTPS
-   }
-   ```
-
-3. The `config.ts` file is ignored by git to protect your credentials.
+**Default credentials:**
+- Username: `admin`
+- Password: `admin123`
+- Hash: `240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9`
 
 ## Development
 
@@ -116,20 +103,48 @@ The built files will be in the `dist/` directory and can be deployed to any stat
 
 ### Using Docker Compose (Recommended)
 
-```bash
-# Build and run the container (will show version as "dev")
-docker-compose up -d
+1. **Copy the environment file:**
+   ```bash
+   cp .env.example .env
+   ```
 
-# View logs
-docker-compose logs -f
+2. **Edit `.env` with your configuration:**
+   ```bash
+   # iOSMB Server Configuration
+   IOSMB_SERVER_IP=79.137.79.153
+   IOSMB_SERVER_PORT=8180
+   IOSMB_SERVER_PASSWORD=your-server-password
+   IOSMB_SERVER_SSL=false
+   
+   # Web App Authentication
+   IOSMB_WEB_USERNAME=admin
+   IOSMB_WEB_PASSWORD_HASH=your-password-hash
+   ```
 
-# Stop the container
-docker-compose down
-```
-
-**Note:** When running locally with `yarn serve` or `docker-compose`, the version will display as "dev". When building with a Git tag (e.g., `v1.0.0`), the actual version will be shown.
+3. **Build and run:**
+   ```bash
+   # Build and run the container
+   docker compose up --build
+   
+   # Stop the container
+   docker compose down
+   ```
 
 The application will be available at `http://localhost:8080`
+
+### Production Deployment with Docker Swarm
+
+For production deployment with Traefik:
+
+1. **Create a `.env` file on your server** with your production values
+2. **Deploy using Docker Swarm:**
+   ```bash
+   docker stack deploy -c docker-compose.prod.yml iosmb
+   ```
+
+The configuration is injected at runtime via environment variables, so you can update settings without rebuilding the image!
+
+**Note:** When running locally with `yarn serve` or `docker-compose`, the version will display as "dev". When building with a Git tag (e.g., `v1.0.0`), the actual version will be shown.
 
 ### Using Docker directly
 
