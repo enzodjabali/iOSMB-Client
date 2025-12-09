@@ -38,7 +38,7 @@
         </div>
       </div>
       <div class="searchContainer">
-        <input type="search" placeholder="Search" class="textinput" v-model="chats.search" />
+        <input type="search" placeholder="Search" class="textinput" v-model="chats.state.search" />
       </div>
       <div class="chats scrollable" ref="chatsContainer">
         <chat
