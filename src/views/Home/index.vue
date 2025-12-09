@@ -22,7 +22,7 @@
           </div>
         </div>
         <div class="statusIndicator" style="margin-top: 1px;" v-tooltip:bottom.tooltip="window.statusText.value">
-          <feather type="circle" stroke="rgba(25,25,25,0.5)" :fill="window.statusColor.value" size="10"></feather>
+          <feather type="circle" stroke="rgba(100,100,100,0.8)" :fill="window.statusColor.value" size="10"></feather>
         </div>
         <div class="menuBtn">
           <feather type="settings" stroke="rgba(152,152,152,0.5)" size="20" @click="$refs.settingsModal.openModal()"></feather>
@@ -38,7 +38,7 @@
         </div>
       </div>
       <div class="searchContainer">
-        <input type="search" placeholder="Search" class="textinput" v-model="chats.search" />
+        <input type="search" placeholder="Search" class="textinput" v-model="chats.state.search" />
       </div>
       <div class="chats scrollable" ref="chatsContainer">
         <chat
@@ -215,7 +215,11 @@ html {
   width: 100%;
   background-color: rgba(29, 29, 29, 0);
   font-family: 'Roboto', -apple-system, BlinkMacSystemFont, Avenir, Helvetica, Arial, sans-serif;
-  font-weight: 300;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-smooth: always;
 }
 
 body {
@@ -227,17 +231,22 @@ body {
   overflow: hidden;
   border: 1px solid rgb(0, 0, 0);
   border-radius: 10px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #vueApp {
   font-family: 'Roboto', -apple-system, BlinkMacSystemFont, Avenir, Helvetica, Arial, sans-serif;
-  font-weight: 300;
+  font-weight: 400;
   text-align: center;
   color: #ebecec;
   position: absolute;
   top: 0px;
   left: 0px;
   right: 0px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-smooth: always;
   bottom: 0px;
   background-color: rgba(29, 29, 29, 0);
   border: 1px solid #4a4a4a;

@@ -170,7 +170,7 @@
                           :date="msg.date"
                           @refreshRequest="messages.reloadMessage(text.guid)"
                         />
-                        <unsupported-message v-else />
+                        <unsupported-message v-else :text="text.text" />
                       </div>
                     </div>
 

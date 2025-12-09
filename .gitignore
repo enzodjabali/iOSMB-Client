@@ -1,1 +1,6 @@
 node_modules
+dist
+.DS_Store
+
+# Don't commit config with credentials
+src/config.ts

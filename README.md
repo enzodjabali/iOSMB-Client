@@ -31,6 +31,27 @@ npm install
 yarn install
 ```
 
+## Configuration
+
+**Important:** Server settings are now configured in code, not in the browser UI.
+
+1. Copy the example configuration file:
+   ```bash
+   cp src/config.example.ts src/config.ts
+   ```
+
+2. Edit `src/config.ts` with your iOSMB server details:
+   ```typescript
+   export const config = {
+     ipAddress: '192.168.1.100',  // Your iOS device IP
+     port: 8180,                   // Server port
+     password: 'your-password',    // Server password
+     ssl: false,                   // Enable if using HTTPS
+   }
+   ```
+
+3. The `config.ts` file is ignored by git to protect your credentials.
+
 ## Development
 
 ```bash
@@ -58,7 +79,7 @@ The built files will be in the `dist/` directory and can be deployed to any stat
 ### Using Docker Compose (Recommended)
 
 ```bash
-# Build and run the container
+# Build and run the container (will show version as "dev")
 docker-compose up -d
 
 # View logs
@@ -67,6 +88,8 @@ docker-compose logs -f
 # Stop the container
 docker-compose down
 ```
+
+**Note:** When running locally with `yarn serve` or `docker-compose`, the version will display as "dev". When building with a Git tag (e.g., `v1.0.0`), the actual version will be shown.
 
 The application will be available at `http://localhost:8080`
 
@@ -87,21 +110,35 @@ docker stop webmessage
 docker rm webmessage
 ```
 
-## Configuration
-
-On first launch, go to Settings and configure:
-
-1. **Password**: The password set in the iOSMB Server
-2. **IP Address**: Your iOS device's IP address on the local network
-3. **Port**: The port configured in the iOSMB Server (default: 8180)
-4. **SSL**: Enable if you've configured SSL in the server
-
 ## Browser Compatibility
 
 - Chrome/Edge 90+
 - Firefox 88+
 - Safari 14+
 - Any modern browser with WebSocket and Notification API support
+
+## Apple Format Support
+
+### HEIC Images (Client-Side)
+
+The client **automatically converts HEIC images** (iPhone format) to JPEG for display in the browser. When you receive a HEIC image:
+
+1. The app detects the HEIC format
+2. Shows a "Converting..." message briefly
+3. Converts the image to JPEG in the browser
+4. Displays the converted image normally
+
+This works entirely client-side using the `heic2any` library, so no server-side configuration is needed!
+
+### MOV Videos & CAF Audio (Server-Side)
+
+In Settings, there's a "Convert Apple formats (mov, heic, caf)" toggle. When enabled, it adds `&transcode=1` to media URLs, which tells the **server** to convert:
+
+- **MOV** videos → MP4/WebM
+- **CAF** audio → MP3/OGG  
+- **HEIC** images → JPEG (though client-side conversion is preferred)
+
+**Important:** This requires the server to support transcoding. The client cannot convert video/audio formats in the browser. Make sure your iOSMB Server has transcoding capabilities if you need MOV/CAF support.
 
 ## Security Note
 

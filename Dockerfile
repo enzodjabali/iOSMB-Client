@@ -1,6 +1,9 @@
 # Build stage
 FROM node:18-alpine AS build
 
+ARG VERSION=dev
+ENV VUE_APP_VERSION=${VERSION}
+
 WORKDIR /app
 
 # Copy package files

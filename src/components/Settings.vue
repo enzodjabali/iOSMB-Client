@@ -17,11 +17,11 @@
           <div
             class="selector"
             :class="{
-              active: activeView == 'tweak',
+              active: activeView == 'server',
             }"
-            @click="activeView = 'tweak'"
+            @click="activeView = 'server'"
           >
-            Tweak
+            Server
           </div>
           <div
             class="selector"
@@ -43,26 +43,18 @@
           </div>
         </div>
         <div class="settingsWrapper">
-          <div class="settingsColumn" v-if="activeView == 'tweak'">
-            <input type="password" placeholder="Password" class="textinput" v-model="password" />
-            <div class="IPGroup">
-              <input type="text" placeholder="IP Address" class="textinput" v-model="ipAddress" :disabled="enableTunnel" />
-              <div class="tunnelToggle" v-tooltip:left.tooltip="relayMessage">
-                <feather type="circle" size="20" @click="toggleTunnel" :fill="relayColor"></feather>
-              </div>
+          <div class="settingsColumn" v-if="activeView == 'server'">
+            <div style="margin-bottom: 16px; color: rgb(150,150,150); font-size: 13px;">
+              Server settings are configured in <code>src/config.ts</code>
             </div>
-            <input
-              ref="portField"
-              type="number"
-              placeholder="Port"
-              class="textinput"
-              min="1"
-              max="65535"
-              @keyup="enforceConstraints"
-              v-model="port"
-            />
-            <label class="switch">
-              <input type="checkbox" v-model="ssl" />
+            <div style="margin-bottom: 8px; color: rgb(180,180,180); font-size: 12px;">Password</div>
+            <input type="password" class="textinput" :value="$store.state.password" readonly style="opacity: 0.6; cursor: not-allowed;" />
+            <div style="margin-bottom: 8px; margin-top: 16px; color: rgb(180,180,180); font-size: 12px;">IP Address</div>
+            <input type="text" class="textinput" :value="$store.state.ipAddress" readonly style="opacity: 0.6; cursor: not-allowed;" />
+            <div style="margin-bottom: 8px; margin-top: 16px; color: rgb(180,180,180); font-size: 12px;">Port</div>
+            <input type="number" class="textinput" :value="$store.state.port" readonly style="opacity: 0.6; cursor: not-allowed;" />
+            <label class="switch" style="margin-top: 16px; opacity: 0.6; cursor: not-allowed;">
+              <input type="checkbox" :checked="$store.state.ssl" disabled />
               <i></i>
               <div>
                 Enable SSL
@@ -70,27 +62,24 @@
             </label>
           </div>
           <div class="settingsColumn" v-else-if="activeView == 'conversations'">
-            <label class="switch">
+            <label class="switch" style="margin-top: 8px;">
               <input type="checkbox" v-model="subjectLine" />
               <i></i>
               <div>
                 Enable subject line
               </div>
             </label>
-            <label class="switch">
+            <label class="switch" style="margin-top: 16px;">
               <input type="checkbox" v-model="transcode" />
               <i></i>
               <div>
-                Convert Apple formats
-                <span style="font-size: 12px;">(mov, heic, caf)</span>
+                Convert Apple formats <span style="font-size: 12px; color: rgb(150,150,150);">(mov, heic, caf)</span>
               </div>
             </label>
           </div>
           <div class="settingsColumn" v-if="activeView == 'client'">
-            <label class="select">
-              <div>
-                Emoji style:
-              </div>
+            <div style="margin-bottom: 8px; margin-top: 8px; color: rgb(180,180,180); font-size: 12px; text-align: center;">Emoji style</div>
+            <label class="select" style="display: flex; justify-content: center;">
               <select v-model="emojiSet">
                 <option>Apple</option>
                 <option>Google</option>
@@ -99,32 +88,32 @@
                 <option>Native</option>
               </select>
             </label>
-            <label class="switch">
+            <label class="switch" style="margin-top: 20px;">
               <input type="checkbox" v-model="systemSound" />
               <i></i>
               <div>
                 Use system notification sound
               </div>
             </label>
-            <label class="switch">
+            <label class="switch" style="margin-top: 16px;">
               <input type="checkbox" v-model="cacheMessages" />
               <i></i>
               <div>
-                Precache messages
-                <span style="color: rgba(255,0,0,0.8);font-size: 12px;">More battery drain</span>
+                Precache messages <span style="color: rgba(255,0,0,0.8); font-size: 12px;">More battery drain</span>
               </div>
             </label>
-            <!-- Launch on startup and window controls not available in web version -->
             
-            <label class="switch">
+            <label class="switch" style="margin-top: 16px;">
               <input type="checkbox" v-model="privacyMode" />
               <i></i>
               <div>
                 Enable privacy mode
               </div>
             </label>
-            <label class="file">
-              <div>
+            
+            <div style="margin-bottom: 8px; margin-top: 20px; color: rgb(180,180,180); font-size: 12px; text-align: center;">Select custom notification file</div>
+            <label class="file" style="display: flex; justify-content: center;">
+              <div style="display: none;">
                 Select custom notification file:
               </div>
               <input type="file" name="soundFile" ref="soundFile" style="display: none;" @change="notifSoundChanged" accept="audio/*" />
@@ -149,7 +138,7 @@
         <a class="btn" v-on:click="saveModal">Save</a>
         <a v-on:click="closeModal" class="btn destructive">Cancel</a>
 
-        <div class="version">v{{ version }}</div>
+        <div class="version">{{ version.replace(/^v/, '') }}</div>
       </div>
     </div>
   </transition>
@@ -179,7 +168,7 @@ export default {
       minimize: true,
       macstyle: false,
       acceleration: true,
-      version: '0.7.2-web',
+      version: process.env.VUE_APP_VERSION || 'dev',
       process: { platform: 'web' },
       relayMessage: 'Tunneling is not available in web version',
       relayColor: 'rgba(152,152,152,0.5)',
@@ -188,7 +177,7 @@ export default {
       notifSound: '/sounds/receivedText.mp3',
       emojiSet: 'Twitter',
       privacyMode: false,
-      activeView: 'tweak',
+      activeView: 'server',
     }
   },
   methods: {
@@ -209,11 +198,7 @@ export default {
       alert('USB tunneling is not available in the web version. Please use direct IP connection.')
     },
     saveModal() {
-      this.$store.commit('setPassword', this.password)
-      this.$store.commit('setIPAddress', this.ipAddress)
-      this.$store.commit('setFallbackIPAddress', this.ipAddress)
-      this.$store.commit('setPort', this.port)
-      this.$store.commit('setSSL', this.ssl)
+      // Server settings are now in config.ts and not modifiable
       this.$store.commit('setSubjectLine', this.subjectLine)
       this.$store.commit('setTranscode', this.transcode)
       this.$store.commit('setSystemSound', this.systemSound)
@@ -233,13 +218,10 @@ export default {
     },
     openModal() {
       this.show = true
-      this.activeView = 'tweak'
+      this.activeView = 'server'
     },
     loadValues() {
-      this.password = this.$store.state.password
-      this.ipAddress = this.$store.state.fallbackIpAddress != '' ? this.$store.state.fallbackIpAddress : this.ipAddress
-      this.port = this.$store.state.port
-      this.ssl = this.$store.state.ssl
+      // Server settings are now in config.ts
       this.subjectLine = this.$store.state.subjectLine
       this.transcode = this.$store.state.transcode
       this.systemSound = this.$store.state.systemSound
@@ -274,7 +256,8 @@ export default {
 <style lang="scss" scoped>
 .version {
   font-size: 12px;
-  margin-bottom: -18px;
+  margin-bottom: -10px;
+  margin-top: 8px;
   color: gray;
 }
 
@@ -349,7 +332,7 @@ export default {
     position: relative;
     top: 50%;
     transform: translateY(-50%);
-    max-width: 300px;
+    max-width: 420px;
     margin: auto auto;
     display: flex;
     flex-direction: column;
@@ -375,8 +358,7 @@ export default {
         }
 
         &.active {
-          font-weight: 500;
-          text-decoration: underline;
+          font-weight: 600;
           color: white;
         }
       }
@@ -390,7 +372,7 @@ export default {
         display: flex;
         flex: 1 1 0px;
         flex-direction: column;
-        max-width: 300px;
+        max-width: 380px;
 
         h4 {
           padding-left: 8px;
@@ -582,6 +564,7 @@ label.select {
 
 .switch {
   padding-left: 8px;
+  padding-right: 8px;
   text-align: left;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
