@@ -62,27 +62,24 @@
             </label>
           </div>
           <div class="settingsColumn" v-else-if="activeView == 'conversations'">
-            <label class="switch">
+            <label class="switch" style="margin-top: 8px;">
               <input type="checkbox" v-model="subjectLine" />
               <i></i>
               <div>
                 Enable subject line
               </div>
             </label>
-            <label class="switch">
+            <label class="switch" style="margin-top: 16px;">
               <input type="checkbox" v-model="transcode" />
               <i></i>
               <div>
-                Convert Apple formats
-                <span style="font-size: 12px;">(mov, heic, caf)</span>
+                Convert Apple formats <span style="font-size: 12px; color: rgb(150,150,150);">(mov, heic, caf)</span>
               </div>
             </label>
           </div>
           <div class="settingsColumn" v-if="activeView == 'client'">
-            <label class="select">
-              <div>
-                Emoji style:
-              </div>
+            <div style="margin-bottom: 8px; margin-top: 8px; color: rgb(180,180,180); font-size: 12px; text-align: center;">Emoji style</div>
+            <label class="select" style="display: flex; justify-content: center;">
               <select v-model="emojiSet">
                 <option>Apple</option>
                 <option>Google</option>
@@ -91,32 +88,32 @@
                 <option>Native</option>
               </select>
             </label>
-            <label class="switch">
+            <label class="switch" style="margin-top: 20px;">
               <input type="checkbox" v-model="systemSound" />
               <i></i>
               <div>
                 Use system notification sound
               </div>
             </label>
-            <label class="switch">
+            <label class="switch" style="margin-top: 16px;">
               <input type="checkbox" v-model="cacheMessages" />
               <i></i>
               <div>
-                Precache messages
-                <span style="color: rgba(255,0,0,0.8);font-size: 12px;">More battery drain</span>
+                Precache messages <span style="color: rgba(255,0,0,0.8); font-size: 12px;">More battery drain</span>
               </div>
             </label>
-            <!-- Launch on startup and window controls not available in web version -->
             
-            <label class="switch">
+            <label class="switch" style="margin-top: 16px;">
               <input type="checkbox" v-model="privacyMode" />
               <i></i>
               <div>
                 Enable privacy mode
               </div>
             </label>
-            <label class="file">
-              <div>
+            
+            <div style="margin-bottom: 8px; margin-top: 20px; color: rgb(180,180,180); font-size: 12px; text-align: center;">Select custom notification file</div>
+            <label class="file" style="display: flex; justify-content: center;">
+              <div style="display: none;">
                 Select custom notification file:
               </div>
               <input type="file" name="soundFile" ref="soundFile" style="display: none;" @change="notifSoundChanged" accept="audio/*" />
@@ -259,7 +256,8 @@ export default {
 <style lang="scss" scoped>
 .version {
   font-size: 12px;
-  margin-bottom: -18px;
+  margin-bottom: -10px;
+  margin-top: 8px;
   color: gray;
 }
 
@@ -334,7 +332,7 @@ export default {
     position: relative;
     top: 50%;
     transform: translateY(-50%);
-    max-width: 300px;
+    max-width: 420px;
     margin: auto auto;
     display: flex;
     flex-direction: column;
@@ -360,8 +358,7 @@ export default {
         }
 
         &.active {
-          font-weight: 500;
-          text-decoration: underline;
+          font-weight: 600;
           color: white;
         }
       }
@@ -375,7 +372,7 @@ export default {
         display: flex;
         flex: 1 1 0px;
         flex-direction: column;
-        max-width: 300px;
+        max-width: 380px;
 
         h4 {
           padding-left: 8px;
@@ -567,6 +564,7 @@ label.select {
 
 .switch {
   padding-left: 8px;
+  padding-right: 8px;
   text-align: left;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
