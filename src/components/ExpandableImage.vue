@@ -15,11 +15,20 @@
         <feather type="download" stroke="#fff" size="24"></feather>
       </i>
     </template>
-    <lazy-image crossorigin="anonymous" :id="guid" :src="url" @load="handleLoad" :download="path.split('/').pop()" />
+    <img v-if="convertedImageUrl" crossorigin="anonymous" :id="guid" :src="convertedImageUrl" @load="handleLoad" />
+    <lazy-image v-else crossorigin="anonymous" :id="guid" :src="url" @load="handleLoad" @error="handleError" :download="path.split('/').pop()" />
+    <div v-if="isConverting" class="image-converting">
+      <feather type="loader" stroke="rgb(150,150,150)" size="48" class="spin"></feather>
+      <div style="margin-top: 12px; font-size: 12px; color: rgb(150,150,150);">
+        Converting HEIC image...
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import heic2any from 'heic2any'
+
 export default {
   props: {
     path: {
@@ -39,6 +48,9 @@ export default {
     return {
       expanded: false,
       loadedImage: false,
+      imageError: false,
+      isConverting: false,
+      convertedImageUrl: null,
       cloned: null,
     }
   },
@@ -56,6 +68,10 @@ export default {
   },
   beforeUnmount() {
     document.removeEventListener('keydown', this.closeImage)
+    // Clean up object URL to prevent memory leaks
+    if (this.convertedImageUrl) {
+      URL.revokeObjectURL(this.convertedImageUrl)
+    }
   },
   methods: {
     closeImage(event) {
@@ -102,6 +118,43 @@ export default {
     handleLoad() {
       this.$nextTick(this.loadedData)
       this.loadedImage = true
+      this.imageError = false
+      this.isConverting = false
+    },
+    async handleError() {
+      // Check if it might be a HEIC image
+      if (this.path.toLowerCase().endsWith('.heic') || this.path.toLowerCase().endsWith('.heif') || this.type.toLowerCase().includes('heic') || this.type.toLowerCase().includes('heif')) {
+        await this.convertHeicImage()
+      } else {
+        this.imageError = true
+        this.loadedImage = false
+        this.$nextTick(this.loadedData)
+      }
+    },
+    async convertHeicImage() {
+      try {
+        this.isConverting = true
+        
+        // Fetch the HEIC image as a blob
+        const response = await fetch(this.url)
+        const blob = await response.blob()
+        
+        // Convert HEIC to JPEG
+        const convertedBlob = await heic2any({
+          blob: blob,
+          toType: 'image/jpeg',
+          quality: 0.9
+        })
+        
+        // Create an object URL for the converted image
+        this.convertedImageUrl = URL.createObjectURL(Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob)
+        this.isConverting = false
+      } catch (error) {
+        console.error('Failed to convert HEIC image:', error)
+        this.isConverting = false
+        this.imageError = true
+        this.$nextTick(this.loadedData)
+      }
     },
   },
 }
@@ -115,6 +168,29 @@ export default {
   &.nostyle {
     border-radius: 10px;
   }
+}
+.image-error,
+.image-converting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  min-height: 200px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  text-align: center;
+}
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spin {
+  animation: spin 1s linear infinite;
 }
 body > .expandable-image.expanded {
   position: fixed;

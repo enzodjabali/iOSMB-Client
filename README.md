@@ -103,6 +103,17 @@ On first launch, go to Settings and configure:
 - Safari 14+
 - Any modern browser with WebSocket and Notification API support
 
+## HEIC Image Support
+
+The client **automatically converts HEIC images** (iPhone format) to JPEG for display in the browser. When you receive a HEIC image:
+
+1. The app detects the HEIC format
+2. Shows a "Converting..." message briefly
+3. Converts the image to JPEG in the browser
+4. Displays the converted image normally
+
+This works entirely client-side using the `heic2any` library, so no server-side configuration is needed!
+
 ## Security Note
 
 When accessing over the internet, always use SSL/HTTPS to protect your messages and credentials. Consider using a VPN for secure remote access.
