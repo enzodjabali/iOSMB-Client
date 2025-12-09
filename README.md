@@ -96,35 +96,12 @@ On first launch, go to Settings and configure:
 3. **Port**: The port configured in the iOSMB Server (default: 8180)
 4. **SSL**: Enable if you've configured SSL in the server
 
-## Differences from Electron Version
-
-This web version has the following differences:
-
-- No USB tunneling support (direct IP connection only)
-- No desktop notifications (uses browser notifications instead)
-- No system tray integration
-- No auto-launch on startup
-- No window controls (uses browser window)
-- Settings are stored in browser localStorage instead of electron-store
-
 ## Browser Compatibility
 
 - Chrome/Edge 90+
 - Firefox 88+
 - Safari 14+
 - Any modern browser with WebSocket and Notification API support
-
-## Deployment Options
-
-You can deploy this web app to:
-
-- GitHub Pages
-- Netlify
-- Vercel
-- Any static hosting service
-- Your own web server (Apache, Nginx, etc.)
-
-For HTTPS deployment, you'll need to ensure your iOSMB Server also uses SSL, or configure CORS appropriately.
 
 ## Security Note
 
@@ -137,5 +114,3 @@ MIT License
 ## Credits
 
 Based on the original WebMessage project by [sgtaziz](https://github.com/sgtaziz)
-
-Developed by [enzodjabali](https://github.com/enzodjabali)
