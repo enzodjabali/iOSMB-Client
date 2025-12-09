@@ -79,7 +79,7 @@ The built files will be in the `dist/` directory and can be deployed to any stat
 ### Using Docker Compose (Recommended)
 
 ```bash
-# Build and run the container
+# Build and run the container (will show version as "dev")
 docker-compose up -d
 
 # View logs
@@ -88,6 +88,8 @@ docker-compose logs -f
 # Stop the container
 docker-compose down
 ```
+
+**Note:** When running locally with `yarn serve` or `docker-compose`, the version will display as "dev". When building with a Git tag (e.g., `v1.0.0`), the actual version will be shown.
 
 The application will be available at `http://localhost:8080`
 

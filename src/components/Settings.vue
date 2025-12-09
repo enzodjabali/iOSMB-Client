@@ -138,7 +138,7 @@
         <a class="btn" v-on:click="saveModal">Save</a>
         <a v-on:click="closeModal" class="btn destructive">Cancel</a>
 
-        <div class="version">v{{ version }}</div>
+        <div class="version">{{ version.replace(/^v/, '') }}</div>
       </div>
     </div>
   </transition>
@@ -168,7 +168,7 @@ export default {
       minimize: true,
       macstyle: false,
       acceleration: true,
-      version: '0.7.2-web',
+      version: process.env.VUE_APP_VERSION || 'dev',
       process: { platform: 'web' },
       relayMessage: 'Tunneling is not available in web version',
       relayColor: 'rgba(152,152,152,0.5)',
