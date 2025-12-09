@@ -29,7 +29,7 @@ jobs:
     - name: Build and tag Docker image
       run: |
         TAG=$(echo ${GITHUB_REF#refs/tags/}) # Extract the tag
-        IMAGE=ghcr.io/${{ github.repository }}
+        IMAGE=ghcr.io/enzodjabali/iosmb
         docker build -t $IMAGE:$TAG .
         docker tag $IMAGE:$TAG $IMAGE:latest
 
@@ -37,11 +37,11 @@ jobs:
     - name: Push Docker image with version tag
       run: |
         TAG=$(echo ${GITHUB_REF#refs/tags/}) # Extract the tag
-        IMAGE=ghcr.io/${{ github.repository }}
+        IMAGE=ghcr.io/enzodjabali/iosmb
         docker push $IMAGE:$TAG
 
     # Step 5: Push the Docker image with 'latest' tag
     - name: Push Docker image with 'latest' tag
       run: |
-        IMAGE=ghcr.io/${{ github.repository }}
+        IMAGE=ghcr.io/enzodjabali/iosmb
         docker push $IMAGE:latest
