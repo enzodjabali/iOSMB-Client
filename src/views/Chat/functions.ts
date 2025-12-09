@@ -1,5 +1,3 @@
-import { ipcRenderer } from 'electron'
-import * as remote from '@electron/remote'
 import emojiRegex from 'emoji-regex'
 import { nextTick, onMounted, getCurrentInstance, reactive, ComponentInternalInstance, watch } from 'vue'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
@@ -23,7 +21,7 @@ const scrollToBottom = () => {
     $(document).off('click', '.message a[href^="http"]')
     $(document).on('click', '.message a[href^="http"]', function(event) {
       event.preventDefault()
-      remote.shell.openExternal(this.href)
+      window.open(this.href, '_blank')
     })
 
     if (state.lastHeight == null) {
@@ -103,7 +101,7 @@ const attachmentLoaded = () => {
 }
 
 const rightClickMessage = (args: object) => {
-  ipcRenderer.send('rightClickMessage', args)
+  // ipcRenderer.send('rightClickMessage', args)
 }
 
 const autoCompleteHooks = () => {

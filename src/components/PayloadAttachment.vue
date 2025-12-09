@@ -39,7 +39,6 @@
 </template>
 
 <script>
-import * as remote from '@electron/remote'
 
 export default {
   name: 'PayloadAttachment',
@@ -119,7 +118,7 @@ export default {
       }
     },
     openURL() {
-      remote.shell.openExternal(this.link)
+      window.open(this.link, '_blank')
     },
     openURLFromImage() {
       if (this.embed || this.video) return

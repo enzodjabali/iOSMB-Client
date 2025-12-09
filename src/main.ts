@@ -5,12 +5,10 @@ import store from './store'
 import directives from './directives'
 import filters from './filters'
 import axios from 'axios'
-import https from 'https'
 import VueNativeSock from 'vue-native-websocket-vue3'
 import VueFeather from 'vue-feather'
 import linkify from 'vue-linkify'
 import jQuery from 'jquery'
-// import * as VueConfirmDialog from 'vue-confirm-dialog'
 import { longClickDirective } from 'vue-long-click'
 import { IconDefinition, library } from '@fortawesome/fontawesome-svg-core'
 import { faHeart, faThumbsUp, faThumbsDown, faLaughSquint, faExclamation, faQuestion } from '@fortawesome/free-solid-svg-icons'
@@ -26,7 +24,7 @@ declare global {
 
 window.$ = jQuery
 window.jQuery = jQuery
-// import 'imagesloaded'
+
 const app = createApp(App)
   .use(store)
   .use(router)
@@ -36,8 +34,7 @@ app.use(VueNativeSock, 'ws://', {
   reconnection: true,
   connectManually: true,
 })
-// app.use(Popover, { tooltip: true })
-// app.use(VueConfirmDialog)
+
 app.use(VueLazyImage)
 
 library.add(faHeart as IconDefinition)
@@ -50,16 +47,14 @@ library.add(faQuestion as IconDefinition)
 app.component('font-awesome-icon', FontAwesomeIcon)
 app.component('font-awesome-layers', FontAwesomeLayers)
 app.component('feather', VueFeather)
-// app.component('vue-confirm-dialog', VueConfirmDialog.default)
 
-// app.config.productionTip = false
+// Set axios defaults from store
 axios.defaults.headers.common['Authorization'] = store.state.password
 app.provide(
   '$http',
   axios.create({
-    httpsAgent: new https.Agent({
-      rejectUnauthorized: false,
-    }),
+    // For web, we don't need the https agent with rejectUnauthorized
+    // Users can handle certificate issues through browser
   })
 )
 

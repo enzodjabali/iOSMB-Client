@@ -1,6 +1,5 @@
 import { onMounted, reactive, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { ipcRenderer, IpcRendererEvent } from 'electron'
 import { sendSocket, state as messagesState } from './messages'
 
 const state = reactive({
@@ -92,9 +91,9 @@ export default () => {
     state.initialY = null
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ipcRenderer.on('reactToMessage', (_e: IpcRendererEvent, args: any) => {
-      openReactionMenu(args.id, args.ii, args.guid, args.reactions, args.part, args.balloon)
-    })
+    // ipcRenderer.on('reactToMessage', (_e: any, args: any) => {
+      //       openReactionMenu(args.id, args.ii, args.guid, args.reactions, args.part, args.balloon)
+    //     })
   }
 
   onMounted(init)

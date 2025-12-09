@@ -1,171 +1,77 @@
-import { reactive, computed, onMounted, onBeforeUnmount } from 'vue'
+import { reactive, computed } from 'vue'
+import type { Router } from 'vue-router'
 
-import { Router, useRouter } from 'vue-router'
-import { Store, useStore } from 'vuex'
-import { BrowserWindow, ipcRenderer } from 'electron'
-import * as remote from '@electron/remote'
-import { state as chatsState } from './chats'
+type Nullable<T> = T | null
 
 let router: Nullable<Router> = null
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let store: Nullable<Store<any>> = null
 
-const state = reactive({
-  updateAvailable: false,
-  maximized: false,
-  maximizing: false,
-  win: null as Nullable<BrowserWindow>,
+export const state = reactive({
   status: 0,
+  win: null as any,
+  maximized: false,
+  updateReady: false,
+  newUpdate: false
 })
 
-const statusColor = computed(() => {
-  if (state.status == 0) {
-    return 'rgba(255,0,0,0.8)'
-  } else if (state.status == 1) {
-    return 'rgba(255,100,0,0.8)'
-  } else if (state.status == 2) {
-    return 'rgba(0,255,0,0.5)'
-  }
+export function closeWindow(): void {
+  // Web version: close tab/window if allowed
+  window.close()
+}
 
+export function minimizeWindow(): void {
+  // Web version: no-op (browsers don't allow minimizing)
+  console.log('Minimize not supported in web version')
+}
+
+export function maximizeWindow(): void {
+  // Web version: no-op (browsers don't allow window control)
+  console.log('Maximize not supported in web version')
+}
+
+export function restart(): void {
+  // Web version: reload the page
+  window.location.reload()
+}
+
+export const statusColor = computed(() => {
+  if (state.updateReady) {
+    return 'green'
+  } else if (state.newUpdate) {
+    return 'orange'
+  }
   return ''
 })
 
-const statusText = computed(() => {
-  if (state.status == 0) {
-    return 'Device not found'
-  } else if (state.status == 1) {
-    return 'Device found. Retrieving data...'
-  } else if (state.status == 2) {
-    return 'Device connected'
+export const statusText = computed(() => {
+  if (state.updateReady) {
+    return 'Update ready!'
+  } else if (state.newUpdate) {
+    return 'Update downloading...'
   }
-
   return ''
 })
 
-const closeWindow = () => {
-  state.win?.close()
+export function initWindow(r: Router): void {
+  router = r
+  console.log('Web version: window initialized')
 }
 
-const minimizeWindow = () => {
-  state.win?.minimize()
+export const process = {
+  platform: 'web'
 }
 
-const maximizeWindow = () => {
-  state.maximizing = true
+export const win = computed(() => state.win)
 
-  if (state.maximized) {
-    state.win?.restore()
-    state.win?.setSize(700, 600)
-    state.win?.center()
-    if (process.platform !== 'darwin') document.body.style.borderRadius = ''
-  } else {
-    state.win?.maximize()
-    if (process.platform !== 'darwin') document.body.style.borderRadius = '0'
-  }
-
-  state.maximized = !state.maximized
-
-  setTimeout(() => {
-    state.maximizing = false
-  }, 50)
-}
-
-const onMove = (e: Electron.Event) => {
-  e.preventDefault()
-  if (state.maximizing) return
-  if (state.maximized) {
-    state.win?.restore()
-    if (process.platform !== 'darwin') document.body.style.borderRadius = ''
-    state.maximized = false
-  }
-}
-
-const restart = () => {
-  ipcRenderer.send('restart_app')
-}
-
-export { state }
-
-export default () => {
-  store = useStore()
-  router = useRouter()
-
-  onBeforeUnmount(() => {
-    $(window).off('resize')
-    state.win?.removeListener('move', onMove)
-    ipcRenderer.removeAllListeners('win_id')
-  })
-
-  const process = window.process
-
-  onMounted(() => {
-    $(document).mousedown(event => {
-      if (event.which == 3) {
-        //this is a right click, so electron-context-menu will be appearing momentarily...
-        ipcRenderer.send('rightClickMessage', null)
-      }
-    })
-
-    ipcRenderer.send('loaded')
-
-    ipcRenderer.on('update_available', () => {
-      ipcRenderer.removeAllListeners('update_available')
-    })
-
-    ipcRenderer.on('update_downloaded', () => {
-      ipcRenderer.removeAllListeners('update_downloaded')
-      state.updateAvailable = true
-    })
-
-    ipcRenderer.on('navigateTo', (sender, id) => {
-      if (isNaN(id)) {
-        router?.push('/chat/new').catch(() => {})
-      } else {
-        const arrayId = parseInt(id) - 1
-        if (chatsState.chats[arrayId]) {
-          router?.push('/chat/' + chatsState.chats[arrayId].personId).catch(() => {})
-        }
-      }
-    })
-
-    ipcRenderer.on('navigateChat', (sender, personId) => {
-      router?.push('/chat/' + personId).catch(() => {})
-    })
-
-    ipcRenderer.on('win_id', () => {
-      // state.win = remote.BrowserWindow.fromId(id)
-      state.win = remote.getCurrentWindow()
-
-      window.addEventListener('resize', () => {
-        if (state.maximizing) return
-        if (state.maximized) {
-          state.win?.restore()
-          if (process.platform !== 'darwin') document.body.style.borderRadius = ''
-          state.maximized = false
-        }
-      })
-
-      state.win?.on('move', onMove)
-
-      if (!(store?.state.macstyle || process.platform === 'darwin')) {
-        document.body.style.border = 'none'
-        document.body.style.borderRadius = '0'
-      }
-
-      if (!store?.state.acceleration) {
-        document.documentElement.style.backgroundColor = 'black'
-      }
-    })
-  })
-
+export default function () {
   return {
-    state,
-    statusColor,
-    statusText,
-    process,
     closeWindow,
     minimizeWindow,
     maximizeWindow,
     restart,
+    statusColor,
+    statusText,
+    win,
+    process,
+    state
   }
 }
